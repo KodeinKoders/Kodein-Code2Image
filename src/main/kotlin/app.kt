@@ -20,29 +20,7 @@ import styled.*
 val App = functionalComponent<RProps>("App") {
 
     var fileName by useState("code.kt")
-    var content by useState(
-"""        var content by useState("")
-        val codeRef = useRef<HTMLElement?>(null)
-        var lang by useState("kotlin")
-    
-        useEffect(listOf(content, lang)) {
-            val code = codeRef.current!!
-            code.clear()
-            code.textContent = content.trimIndent()
-            hljs.highlightBlock(codeRef.current!!)
-        }
-    
-        useEffectWithCleanup {
-            val listener = EventListener {
-                it as KeyboardEvent
-                if (it.key == "s" && (it.metaKey || it.ctrlKey)) {
-                    println("Save!")
-                    it.preventDefault()
-                }
-            }
-            window.addEventListener("keydown", listener)
-            ({ window.removeEventListener("keydown", listener) })
-        }""")
+    var content by useState("")
     var lang by useState("kotlin")
 
     val codeRef = useRef<HTMLElement?>(null)
@@ -166,6 +144,7 @@ val App = functionalComponent<RProps>("App") {
 
                 styledTextArea {
                     attrs.value = content
+                    attrs.placeholder = "Code here..."
                     css {
                         flexGrow = 1.0
                         flexBasis = FlexBasis.zero
