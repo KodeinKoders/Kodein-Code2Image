@@ -64,9 +64,7 @@ val App = functionalComponent<RProps>("App") {
         css {
             display = Display.flex
             flexDirection = FlexDirection.column
-            width = 100.pct
-            height = 100.pct
-            position = Position.relative
+            minHeight = 100.pct
         }
 
         styledDiv {
@@ -110,10 +108,10 @@ val App = functionalComponent<RProps>("App") {
 
         styledDiv {
             css {
+                flexGrow = 1.0
                 display = Display.flex
                 flexDirection = FlexDirection.row
                 width = 100.pct
-                height = 100.pct
             }
 
             styledDiv {
@@ -130,7 +128,8 @@ val App = functionalComponent<RProps>("App") {
                     css {
                         borderStyle = BorderStyle.none
                         fontFamily = "Picon"
-                        fontSize = 1.0.rem
+                        fontSize = 1.1.rem
+                        fontWeight = FontWeight.w500
                         whiteSpace = WhiteSpace.nowrap
                         outline = Outline.none
                         marginBottom = 0.5.rem
@@ -147,7 +146,6 @@ val App = functionalComponent<RProps>("App") {
                     attrs.placeholder = "Code here..."
                     css {
                         flexGrow = 1.0
-                        flexBasis = FlexBasis.zero
                         resize = Resize.none
                         borderStyle = BorderStyle.none
                         fontFamily = "JetBrains Mono"
@@ -157,7 +155,10 @@ val App = functionalComponent<RProps>("App") {
                         backgroundColor = Color("#F8F8F8")
                     }
                     attrs.onChangeFunction = {
-                        content = it.target!!.unsafeCast<HTMLTextAreaElement>().value
+                        val textarea = it.target as HTMLTextAreaElement
+                        textarea.style.height = "1px"
+                        textarea.style.height = "${textarea.scrollHeight + 25}px"
+                        content = textarea.value
                     }
                 }
             }
@@ -186,6 +187,8 @@ val App = functionalComponent<RProps>("App") {
                         css {
                             marginBottom = 0.5.rem
                             fontFamily = "Picon"
+                            fontSize = 1.1.rem
+                            fontWeight = FontWeight.w500
                         }
                         attrs.classes += "hljs-comment"
                         if (fileName.isNotEmpty()) +fileName
@@ -209,7 +212,10 @@ val App = functionalComponent<RProps>("App") {
                                 +"${it + 1}\n"
                             }
                         }
-                        pre {
+                        styledPre {
+                            css {
+                                paddingRight = 0.5.em
+                            }
                             code(lang) {
                                 ref = codeRef
                             }

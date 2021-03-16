@@ -17,3 +17,13 @@
     text-rendering: optimizeLegibility;
     font-display: swap;
 }
+
+@font-face {
+    font-family: 'Picon';
+    src: url(LCTPicon-Medium.ttf) format('ttf'),
+    url(LCTPicon-Medium.woff2) format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+    font-display: swap;
+}
