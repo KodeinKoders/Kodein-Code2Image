@@ -7,6 +7,7 @@ import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onLoadFunction
 import kotlinx.html.unsafe
 import org.w3c.dom.*
 import org.w3c.dom.events.EventListener
@@ -19,9 +20,9 @@ import styled.*
 
 val App = functionalComponent<RProps>("App") {
 
-    var fileName by useState("code.kt")
+    var fileName by useState("")
     var content by useState("")
-    var lang by useState("kotlin")
+    var lang by useState("")
 
     val codeRef = useRef<HTMLElement?>(null)
     val renderRef = useRef<HTMLDivElement?>(null)
@@ -33,6 +34,19 @@ val App = functionalComponent<RProps>("App") {
         hljs.highlightBlock(codeRef.current!!)
     }
 
+    useEffect(emptyList()) {
+        val cookies = document.cookie
+            .split(";")
+            .map {
+                val (k, v) = it.trim().split("=")
+                k to v
+            }
+            .toMap()
+        fileName = cookies["fileName"]?.let { window.atob(it) } ?: "code.kt"
+        content = cookies["content"]?.let { window.atob(it) } ?: ""
+        lang = cookies["lang"]?.let { window.atob(it) } ?: "kotlin"
+    }
+
     fun download() {
         html2canvas(
             renderRef.current!!,
@@ -42,7 +56,7 @@ val App = functionalComponent<RProps>("App") {
         ).then { canvas ->
             val anchor = document.createElement("a") as HTMLAnchorElement
             val name = fileName.takeIf { it.isNotEmpty() } ?: "code"
-            anchor.download = "$fileName.png"
+            anchor.download = "$name.png"
             anchor.href = canvas.toDataURL("image/png;base64")
             anchor.dispatchEvent(MouseEvent("click"))
         }
@@ -101,7 +115,9 @@ val App = functionalComponent<RProps>("App") {
                     option { +it }
                 }
                 attrs.onChangeFunction = {
-                    lang = it.target.unsafeCast<HTMLSelectElement>().value
+                    val select = it.target.unsafeCast<HTMLSelectElement>()
+                    lang = select.value
+                    document.cookie = "lang=${window.btoa(select.value)}"
                 }
             }
         }
@@ -137,7 +153,9 @@ val App = functionalComponent<RProps>("App") {
                         backgroundColor = Color("#F8F8F8")
                     }
                     attrs.onChangeFunction = {
-                        fileName = it.target.unsafeCast<HTMLInputElement>().value
+                        val input = it.target.unsafeCast<HTMLInputElement>()
+                        fileName = input.value
+                        document.cookie = "fileName=${window.btoa(input.value)}"
                     }
                 }
 
@@ -159,6 +177,7 @@ val App = functionalComponent<RProps>("App") {
                         textarea.style.height = "1px"
                         textarea.style.height = "${textarea.scrollHeight + 25}px"
                         content = textarea.value
+                        document.cookie = "content=${window.btoa(textarea.value)}"
                     }
                 }
             }
