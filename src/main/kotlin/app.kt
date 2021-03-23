@@ -35,13 +35,17 @@ val App = functionalComponent<RProps>("App") {
     }
 
     useEffect(emptyList()) {
-        val cookies = document.cookie
-            .split(";")
-            .map {
-                val (k, v) = it.trim().split("=")
-                k to v
-            }
-            .toMap()
+        val cookie = document.cookie
+        val cookies =
+            if (cookie.isNotEmpty()) {
+                cookie
+                .split(";")
+                .map {
+                    val (k, v) = it.trim().split("=")
+                    k to v
+                }
+                .toMap()
+            } else emptyMap()
         fileName = cookies["fileName"]?.let { window.atob(it) } ?: "code.kt"
         content = cookies["content"]?.let { window.atob(it) } ?: ""
         lang = cookies["lang"]?.let { window.atob(it) } ?: "kotlin"
