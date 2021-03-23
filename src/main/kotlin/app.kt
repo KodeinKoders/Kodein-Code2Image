@@ -229,6 +229,7 @@ val App = functionalComponent<RProps>("App") {
                             css {
                                 textAlign = TextAlign.right
                                 paddingRight = 1.rem
+                                minWidth = 1.2.rem
                             }
                             attrs.classes += "hljs-comment"
                             content.trim().lines().indices.forEach {
